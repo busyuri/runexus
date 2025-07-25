@@ -8,9 +8,9 @@ import logoText from '../assets/runexus-text.png';
 export default function Navbar() {
 
 const [messages, setMessages] = useState([
-    { id: 1, user: "Alice", text: "Etkinliğe katılıyor musun?", read: false },
-    { id: 2, user: "Bob", text: "Yarınki koşu saat kaçta?", read: true },
-    { id: 3, user: "Charlie", text: "Tebrikler!", read: false }
+    { id: 1, user: "Alice", text: "Do you run on Sonday?", read: false },
+    { id: 2, user: "Bob", text: "Congratz!", read: true },
+    { id: 3, user: "Charlie",  text: "When do you come?", read: false  }
 ]);
 
 
@@ -54,8 +54,19 @@ const [messages, setMessages] = useState([
 
                     {!isAuthPage && !isLandingPage && (
                         <>
-                            <Link to="/events" className="text-gray-700 hover:text-blue-500 font-medium">Events</Link>
-                            <Link to="/forum" className="text-gray-700 hover:text-blue-500 font-medium">Forum</Link>
+                            <Link
+                                to="/events"
+                                className={`font-medium ${path === "/events" ? "text-black" : "text-gray-700 hover:text-blue-500"}`}
+                            >
+                                Events
+                            </Link>
+
+                            <Link
+                                to="/forum"
+                                className={`font-medium ${path === "/forum" ? "text-black" : "text-gray-700 hover:text-blue-500"}`}
+                            >
+                                Forum
+                            </Link>
                         </>
                     )}
                 </div>
@@ -118,8 +129,8 @@ const [messages, setMessages] = useState([
                                             <p className="font-semibold px-2 pb-2 border-b">Notifications</p>
                                             {[1, 2].map((i) => (
                                                 <div key={i} className="p-2 text-sm hover:bg-gray-100 rounded">
-                                                    <p className="font-medium">Etkinlik Hatırlatması</p>
-                                                    <p className="text-gray-500 text-xs">Koşu etkinliği yarın saat 10:00'da başlıyor.</p>
+                                                    <p className="font-medium">Event Reminder</p>
+                                                    <p className="text-gray-500 text-xs">The running event starts tomorrow at 10:00 am.</p>
                                                 </div>
                                             ))}
                                         </div>
