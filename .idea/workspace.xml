@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="101f5342-f949-4d18-8d75-534dfb5eee53" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/runexus-text.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/runexus-text.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Navbar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/EventsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/EventsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/ForumPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/ForumPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/SignInPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/SignInPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/SignUpPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/SignUpPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

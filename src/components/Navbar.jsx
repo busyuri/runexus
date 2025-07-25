@@ -205,7 +205,7 @@ export default function Navbar() {
                         >
                             ✕
                         </button>
-                        <h2 className="text-blue-600 font-semibold text-lg mb-2">Message from {selectedMessage.user}</h2>
+                        <h2 className="text-orange-600 font-semibold text-lg mb-2">Message from {selectedMessage.user}</h2>
                         <p className="text-gray-700 mb-4">{selectedMessage.text}</p>
                         <textarea
                             rows="3"
@@ -220,7 +220,7 @@ export default function Navbar() {
                                 setReplyText("");
                                 alert("Yanıt gönderildi!");
                             }}
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                            className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 text-sm"
                         >
                             Send Reply
                         </button>
