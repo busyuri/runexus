@@ -6,13 +6,11 @@ import logoIcon from '../assets/star.png';
 import logoText from '../assets/runexus-text.png';
 
 export default function Navbar() {
-
-const [messages, setMessages] = useState([
-    { id: 1, user: "Alice", text: "Do you run on Sonday?", read: false },
-    { id: 2, user: "Bob", text: "Congratz!", read: true },
-    { id: 3, user: "Charlie",  text: "When do you come?", read: false  }
-]);
-
+    const [messages, setMessages] = useState([
+        { id: 1, user: "Alice", text: "Do you run on Sonday?", read: false },
+        { id: 2, user: "Bob", text: "Congratz!", read: true },
+        { id: 3, user: "Charlie", text: "When do you come?", read: false }
+    ]);
 
     const location = useLocation();
     const path = location.pathname;
@@ -29,6 +27,12 @@ const [messages, setMessages] = useState([
     const profileRef = useRef();
     const msgRef = useRef();
     const notifRef = useRef();
+    const user = {
+        name: "James",
+        surname: "Bond",
+        profilePicture: ""
+    };
+
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -44,19 +48,16 @@ const [messages, setMessages] = useState([
         <>
             <nav className="bg-white shadow p-4 flex justify-between items-center">
                 <div className="flex items-center space-x-6">
-
-                    <Link to="/" className="flex items-center gap-0.1">
-                        <img src={logoIcon} alt="Runexus Icon" className="w-10 h-10" />
-                        <img src={logoText} alt="Runexus Text" className="h-8" />
+                    <Link to="/" className="flex items-center gap-2">
+                        <img src={logoIcon} alt="Runexus Icon" className="w-8 h-8" />
+                        <img src={logoText} alt="Runexus Text" className="h-6" />
                     </Link>
-
-
 
                     {!isAuthPage && !isLandingPage && (
                         <>
                             <Link
                                 to="/events"
-                                className={`font-medium ${path === "/events" ? "text-black" : "text-gray-700 hover:text-blue-500"}`}
+                                className={`font-medium ${path === "/events" ? "text-black" : "text-gray-700"}`}
                             >
                                 Events
                             </Link>
@@ -80,17 +81,18 @@ const [messages, setMessages] = useState([
                                     Sign Up
                                 </Link>
                             </>
-
-
                         ) : (
                             <>
                                 {/* Messages Icon */}
                                 <div ref={msgRef} className="relative">
-                                    <EnvelopeIcon onClick={() => {
-                                        setMsgOpen(!msgOpen);
-                                        setNotifOpen(false);
-                                        setDropdownOpen(false);
-                                    }} className="w-6 h-6 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                                    <EnvelopeIcon
+                                        onClick={() => {
+                                            setMsgOpen(!msgOpen);
+                                            setNotifOpen(false);
+                                            setDropdownOpen(false);
+                                        }}
+                                        className={`w-6 h-6 cursor-pointer ${msgOpen ? "text-black" : "text-gray-600 hover:text-black"}`}
+                                    />
                                     {msgOpen && (
                                         <div className="absolute right-0 top-8 bg-white shadow rounded-md w-64 p-2 z-50">
                                             <p className="font-semibold px-2 pb-2 border-b">Messages</p>
@@ -119,11 +121,15 @@ const [messages, setMessages] = useState([
 
                                 {/* Notifications Icon */}
                                 <div ref={notifRef} className="relative">
-                                    <BellIcon onClick={() => {
-                                        setNotifOpen(!notifOpen);
-                                        setMsgOpen(false);
-                                        setDropdownOpen(false);
-                                    }} className="w-6 h-6 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                                    <BellIcon
+                                        onClick={() => {
+                                            setNotifOpen(!notifOpen);
+                                            setMsgOpen(false);
+                                            setDropdownOpen(false);
+                                        }}
+                                        className={`w-6 h-6 cursor-pointer ${notifOpen ? "text-black" : "text-gray-600 hover:text-black"}`}
+
+                                    />
                                     {notifOpen && (
                                         <div className="absolute right-0 top-8 bg-white shadow rounded-md w-64 p-2 z-50">
                                             <p className="font-semibold px-2 pb-2 border-b">Notifications</p>
@@ -139,16 +145,28 @@ const [messages, setMessages] = useState([
 
                                 {/* Profile Dropdown */}
                                 <div ref={profileRef} className="relative">
-                                    <img
+                                    <div
                                         onClick={() => {
                                             setDropdownOpen(!dropdownOpen);
                                             setMsgOpen(false);
                                             setNotifOpen(false);
                                         }}
-                                        src="https://i.pravatar.cc/32"
-                                        alt="Profile"
-                                        className="w-8 h-8 rounded-full border cursor-pointer"
-                                    />
+                                        className="w-8 h-8 flex items-center justify-center rounded-full border cursor-pointer bg-[rgba(230,80,20,0.59)] text-sm font-semibold uppercase text-white overflow-hidden"
+                                    >
+                                        {user.profilePicture ? (
+                                            <img
+                                                src={user.profilePicture}
+                                                alt="Profile"
+                                                className="w-8 h-8 object-cover rounded-full"
+                                            />
+                                        ) : (
+                                            <>
+                                                {user.name.charAt(0)}
+                                                {user.surname.charAt(0)}
+                                            </>
+                                        )}
+                                    </div>
+
                                     {dropdownOpen && (
                                         <div className="absolute right-0 top-12 bg-white shadow-md rounded-md w-40 z-50">
                                             <Link
@@ -170,13 +188,14 @@ const [messages, setMessages] = useState([
                                         </div>
                                     )}
                                 </div>
+
                             </>
                         )}
                     </div>
                 )}
             </nav>
 
-            {/* Mesaj Detay Modalı */}
+                {/* Mesaj Detay Modalı */}
             {selectedMessage && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
                     <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6 relative">

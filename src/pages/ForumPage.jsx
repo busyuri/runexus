@@ -22,6 +22,7 @@ export default function ForumPage() {
             .catch(err => console.error("Error fetching entries:", err));
     }, []);
 
+
     useEffect(() => {
         const handleKey = (e) => {
             if (e.key === "Escape") {
@@ -132,7 +133,7 @@ export default function ForumPage() {
     return (
         <div className="bg-gray-100 min-h-screen py-10 px-4">
             <div className="max-w-5xl mx-auto bg-white/90 rounded-xl shadow p-6">
-                <h1 className="text-3xl font-bold mb-6 text-blue-600">Forum</h1>
+                <h1 className="text-3xl font-bold mb-6 text-black-600">Forum</h1>
                 <div className="space-y-4">
                     {entries.map((entry) => (
                         <div
@@ -227,7 +228,7 @@ export default function ForumPage() {
                             </p>
                         )}
                         <hr className="mb-4" />
-                        <h3 className="font-semibold text-blue-600 mb-2">Comments</h3>
+                        <h3 className="font-semibold text-orange-600-600 mb-2">Comments</h3>
                         <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
                             {selectedEntry.comments.map((c) => (
                                 <div key={c.id} className="relative bg-gray-100 p-2 rounded flex justify-between items-start">
@@ -248,7 +249,7 @@ export default function ForumPage() {
                                                     </button>
                                                     <button
                                                         onClick={handleSaveCommentEdit}
-                                                        className="text-sm text-blue-600 hover:underline"
+                                                        className="text-sm text-orange-600 hover:underline"
                                                     >
                                                         Save
                                                     </button>
@@ -308,7 +309,7 @@ export default function ForumPage() {
                         <div className="flex justify-end">
                             <button
                                 onClick={handleAddComment}
-                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 text-sm"
                             >
                                 Submit
                             </button>

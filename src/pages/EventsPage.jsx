@@ -18,6 +18,13 @@ export default function EventsPage() {
 
     return (
         <main className="bg-gray-100 min-h-screen py-10 px-6">
+
+                <div className="flex items-center justify-between mb-10">
+                    <h1 className="text-3xl font-bold text-black">Events</h1>
+                </div>
+
+
+
             <h1 className="text-3xl font-bold text-center text-orange-600 mb-10">
                 Explore Upcoming Events
             </h1>
