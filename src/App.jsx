@@ -8,6 +8,7 @@ import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
 import ProfilePage from './pages/ProfilePage';
 import MessageDetailPage from './pages/MessageDetailPage';
+import MyEventsPage from "./pages/MyEventsPage.jsx";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
                     <Route path="/signup" element={<SignUpPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/messages/:id" element={<MessageDetailPage />} />
+                    <Route path="/myevents" element={<MyEventsPage />} />
                 </Routes>
             </div>
         </Router>

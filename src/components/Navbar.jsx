@@ -83,6 +83,31 @@ export default function Navbar() {
                             </>
                         ) : (
                             <>
+
+                                {/* Notifications Icon */}
+                                <div ref={notifRef} className="relative">
+                                    <BellIcon
+                                        onClick={() => {
+                                            setNotifOpen(!notifOpen);
+                                            setMsgOpen(false);
+                                            setDropdownOpen(false);
+                                        }}
+                                        className={`w-6 h-6 cursor-pointer ${notifOpen ? "text-black" : "text-gray-600 hover:text-black"}`}
+
+                                    />
+                                    {notifOpen && (
+                                        <div className="absolute right-0 top-8 bg-white shadow rounded-md w-64 p-2 z-50">
+                                            <p className="font-semibold px-2 pb-2 border-b">Notifications</p>
+                                            {[1, 2].map((i) => (
+                                                <div key={i} className="p-2 text-sm hover:bg-gray-100 rounded">
+                                                    <p className="font-medium">Event Reminder</p>
+                                                    <p className="text-gray-500 text-xs">The running event starts tomorrow at 10:00 am.</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
                                 {/* Messages Icon */}
                                 <div ref={msgRef} className="relative">
                                     <EnvelopeIcon
@@ -119,29 +144,6 @@ export default function Navbar() {
                                     )}
                                 </div>
 
-                                {/* Notifications Icon */}
-                                <div ref={notifRef} className="relative">
-                                    <BellIcon
-                                        onClick={() => {
-                                            setNotifOpen(!notifOpen);
-                                            setMsgOpen(false);
-                                            setDropdownOpen(false);
-                                        }}
-                                        className={`w-6 h-6 cursor-pointer ${notifOpen ? "text-black" : "text-gray-600 hover:text-black"}`}
-
-                                    />
-                                    {notifOpen && (
-                                        <div className="absolute right-0 top-8 bg-white shadow rounded-md w-64 p-2 z-50">
-                                            <p className="font-semibold px-2 pb-2 border-b">Notifications</p>
-                                            {[1, 2].map((i) => (
-                                                <div key={i} className="p-2 text-sm hover:bg-gray-100 rounded">
-                                                    <p className="font-medium">Event Reminder</p>
-                                                    <p className="text-gray-500 text-xs">The running event starts tomorrow at 10:00 am.</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
 
                                 {/* Profile Dropdown */}
                                 <div ref={profileRef} className="relative">
@@ -169,6 +171,16 @@ export default function Navbar() {
 
                                     {dropdownOpen && (
                                         <div className="absolute right-0 top-12 bg-white shadow-md rounded-md w-40 z-50">
+
+                                            <Link
+                                                to="/myevents"
+                                                className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                My Events
+                                            </Link>
+
+
                                             <Link
                                                 to="/profile"
                                                 className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
