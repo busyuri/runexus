@@ -1,10 +1,18 @@
 import React from 'react';
-import Card from '../components/Card';
 import landingBg from '../assets/landingpage.png';
-import logoIcon from '../assets/star.png';
-import logoText from '../assets/runexus-text.png';
+import { useNavigate } from 'react-router-dom';
+
+
 
 export default function LandingPage() {
+
+    const navigate = useNavigate();
+
+    const handleLetsRunClick = () => {
+        navigate('/events');
+    };
+
+
     return (
         <div
             className="bg-cover bg-center min-h-screen flex flex-col"
@@ -20,9 +28,13 @@ export default function LandingPage() {
                     <p className="text-black-600 text-lg mb-8">
                         Join local running events, connect with runners like you, and track your journey — all in one place.
                     </p>
-                    <button className="bg-orange-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-orange-700 transition duration-300">
+                    <button
+                        onClick={handleLetsRunClick}
+                        className="bg-orange-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-orange-700 transition duration-300"
+                    >
                         Let’s Run
                     </button>
+
                 </div>
 
             </div>

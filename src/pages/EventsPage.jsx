@@ -25,9 +25,6 @@ export default function EventsPage() {
 
 
 
-            <h1 className="text-3xl font-bold text-center text-orange-600 mb-10">
-                Explore Upcoming Events
-            </h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {events.map((event) => (
                     <Card
@@ -35,6 +32,9 @@ export default function EventsPage() {
                         title={event.title}
                         description={event.description}
                         image={event.imageUrl || 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e'} // fallback image
+                        participantLimit={event.participantLimit}
+                        participantCount={event.participantCount}
+                        eventDate={event.eventDate}
                     />
                 ))}
             </div>

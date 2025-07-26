@@ -14,6 +14,8 @@ export default function ForumPage() {
     const [editingText, setEditingText] = useState("");
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingCommentText, setEditingCommentText] = useState("");
+    const [openCommentBoxId, setOpenCommentBoxId] = useState(null);
+
 
     // ✅ ENTRIES backend'den yükleniyor
     useEffect(() => {
@@ -50,29 +52,32 @@ export default function ForumPage() {
 
 
     // ✅ YENİ YORUM backend'e gönderiliyor
-    const handleAddComment = () => {
+    const handleAddComment = (entryId) => {
         if (!newComment.trim()) return;
 
-        api.post(`/entries/${selectedEntry.id}/comments`, { text: newComment })
+        api.post(`/entries/${entryId}/comments`, { text: newComment })
             .then(res => {
                 const savedComment = res.data;
-
                 const updated = entries.map((e) =>
-                    e.id === selectedEntry.id
-                        ? { ...e, comments: [...e.comments, savedComment] }
+                    e.id === entryId
+                        ? { ...e, comments: [...(e.comments || []), savedComment] }
                         : e
                 );
                 setEntries(updated);
-                setSelectedEntry(prev => ({
-                    ...prev,
-                    comments: [...prev.comments, savedComment],
-                }));
+                if (selectedEntry?.id === entryId) {
+                    setSelectedEntry(prev => ({
+                        ...prev,
+                        comments: [...prev.comments, savedComment],
+                    }));
+                }
                 setNewComment("");
+                setOpenCommentBoxId(null);
             })
             .catch(err => {
                 console.error("Failed to post comment:", err);
             });
     };
+
 
     const handleDeleteEntry = (id) => {
         setEntries(entries.filter((e) => e.id !== id));
@@ -145,7 +150,9 @@ export default function ForumPage() {
                                 <div>
                                     <h2 className="font-semibold text-lg">{entry.title}</h2>
                                     <p className="text-gray-600 mt-1">
-                                        {entry.text} {entry.edited && <span className="text-xs text-gray-400">(edited)</span>}
+                                        {entry.text && <span>{entry.text}</span>}
+                                        {entry.description && <span>  {entry.description}</span>}
+                                        {entry.edited && <span className="text-xs text-gray-400"> (edited)</span>}
                                     </p>
                                 </div>
                                 {entry.userId === currentUserId && (

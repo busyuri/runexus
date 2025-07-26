@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 
-export default function Card({ title, description, image }) {
+export default function Card({ title, description, image, participantLimit, participantCount, eventDate}) {
     const [showDetails, setShowDetails] = useState(false);
 
     const handleImageError = (e) => {
         e.target.src = 'https://via.placeholder.com/300x200/000000/FFFFFF?text=Runexus';
     };
+
+    const formattedDate = eventDate ? new Date(eventDate).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    }) : 'Unknown Date';
 
     return (
         <>
@@ -26,13 +32,13 @@ export default function Card({ title, description, image }) {
                     </div>
                     <div className="mt-4 flex gap-2">
                         <button
-                            className="bg-orange-500 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-600"
+                            className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
                             onClick={() => alert('You joined the event! 🎉')}
                         >
                             Join Event
                         </button>
                         <button
-                            className="bg-blue-600 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-700"
+                            className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
                             onClick={() => setShowDetails(true)}
                         >
                             View Details
@@ -52,10 +58,10 @@ export default function Card({ title, description, image }) {
                             onError={handleImageError}
                         />
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold text-blue-700 mb-2">{title}</h2>
+                            <h2 className="text-2xl font-bold text-orange-700 mb-2">{title}</h2>
                             <p className="text-gray-700 mb-4">{description}</p>
-                            <p className="text-sm text-gray-500">📍 Berlin, Germany</p>
-                            <p className="text-sm text-gray-500 mb-4">🗓️ 21 June 2025</p>
+                            <p className="text-sm text-gray-500 mb-1">🗓️ {formattedDate}</p>
+                            <p className="text-sm text-gray-600 mb-4">👥 Participants: {participantCount}/{participantLimit}</p>
                             <button
                                 onClick={() => setShowDetails(false)}
                                 className="mt-2 bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
@@ -66,6 +72,7 @@ export default function Card({ title, description, image }) {
                     </div>
                 </div>
             )}
+
         </>
     );
 }
