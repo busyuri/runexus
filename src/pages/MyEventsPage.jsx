@@ -34,6 +34,13 @@ export default function MyEventsPage() {
                             participantLimit={event.participantLimit}
                             participantCount={event.participantCount}
                             eventDate={event.eventDate}
+                            eventId={event.eventId}
+                            eventOwnerId={event.userId}
+                            currentUserId={parseInt(localStorage.getItem("userId"))}
+                            onEventDeleted={(id) =>
+                                setMyEvents((prev) => prev.filter((ev) => ev.eventId !== id))
+                            }
+                            isMyEvent={true}
                         />
                     ))}
                 </div>

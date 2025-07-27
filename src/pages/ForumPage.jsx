@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import api from '../api/api';
+import { useNavigate } from "react-router-dom";
+
 
 export default function ForumPage() {
-    const currentUserId = 1;
+    const userId = parseInt(localStorage.getItem("userId")); // giriş kontrolü
+    const currentUserId = userId || null;
 
     const [entries, setEntries] = useState([]);
     const [selectedEntry, setSelectedEntry] = useState(null);
@@ -15,6 +18,12 @@ export default function ForumPage() {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingCommentText, setEditingCommentText] = useState("");
     const [openCommentBoxId, setOpenCommentBoxId] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+    const [newEntry, setNewEntry] = useState({ title: '', text: '' });
+
+    const navigate = useNavigate();
+
+
 
 
     // ✅ ENTRIES backend'den yükleniyor
@@ -39,6 +48,29 @@ export default function ForumPage() {
         return () => window.removeEventListener("keydown", handleKey);
     }, []);
 
+    const handleAddEntry = async (e) => {
+        e.preventDefault();
+        if (!currentUserId) {
+            navigate("/signin");
+            return;
+        }
+
+        try {
+            const res = await api.post("/entries", {
+                ...newEntry,
+                userId: currentUserId
+            });
+            setEntries([res.data, ...entries]);
+            setNewEntry({ title: '', text: '' });
+            setShowForm(false);
+        } catch (err) {
+            console.error("Entry eklenemedi:", err);
+        }
+    };
+
+
+
+
     const handleCardClick = (entry) => {
         setSelectedEntry({
             ...entry,
@@ -51,25 +83,36 @@ export default function ForumPage() {
     };
 
 
-    // ✅ YENİ YORUM backend'e gönderiliyor
     const handleAddComment = (entryId) => {
+        if (!currentUserId) {
+            navigate("/signin");
+            return;
+        }
+
         if (!newComment.trim()) return;
 
         api.post(`/entries/${entryId}/comments`, { text: newComment })
             .then(res => {
-                const savedComment = res.data;
-                const updated = entries.map((e) =>
+                const savedComment = {
+                    ...res.data,
+                    userId: currentUserId,
+                    user: "You",
+                };
+
+                const updatedEntries = entries.map((e) =>
                     e.id === entryId
                         ? { ...e, comments: [...(e.comments || []), savedComment] }
                         : e
                 );
-                setEntries(updated);
+                setEntries(updatedEntries);
+
                 if (selectedEntry?.id === entryId) {
                     setSelectedEntry(prev => ({
                         ...prev,
-                        comments: [...prev.comments, savedComment],
+                        comments: [...(prev.comments || []), savedComment],
                     }));
                 }
+
                 setNewComment("");
                 setOpenCommentBoxId(null);
             })
@@ -77,6 +120,9 @@ export default function ForumPage() {
                 console.error("Failed to post comment:", err);
             });
     };
+
+
+
 
 
     const handleDeleteEntry = (id) => {
@@ -138,7 +184,50 @@ export default function ForumPage() {
     return (
         <div className="bg-gray-100 min-h-screen py-10 px-4">
             <div className="max-w-5xl mx-auto bg-white/90 rounded-xl shadow p-6">
-                <h1 className="text-3xl font-bold mb-6 text-black-600">Forum</h1>
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-3xl font-bold mb-2 text-black-600">Forum</h1>
+                    {currentUserId && (
+                        <button
+                            onClick={() => setShowForm(!showForm)}
+                            className="bg-white hover:bg-gray-200 text-black px-4 py-2 rounded shadow"
+                        >
+                            {showForm ? 'Cancel' : '+ New Entry'}
+                        </button>
+                    )}
+                </div>
+
+                {showForm && (
+                    <form
+                        onSubmit={handleAddEntry}
+                        className="bg-white rounded-xl shadow p-4 mb-6 grid gap-4"
+                    >
+                        <input
+                            type="text"
+                            name="title"
+                            placeholder="Title"
+                            value={newEntry.title}
+                            onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
+                            required
+                            className="border p-2 rounded"
+                        />
+                        <textarea
+                            name="description"
+                            placeholder="Text"
+                            value={newEntry.description}
+                            onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })}
+                            required
+                            className="border p-2 rounded"
+                        />
+
+                        <button
+                            type="submit"
+                            className="bg-black text-white px-4 py-2 rounded"
+                        >
+                            Submit Entry
+                        </button>
+                    </form>
+                )}
+
                 <div className="space-y-4">
                     {entries.map((entry) => (
                         <div
@@ -231,7 +320,13 @@ export default function ForumPage() {
                             </>
                         ) : (
                             <p className="text-gray-700 mb-4">
-                                {selectedEntry.text} {selectedEntry.edited && <span className="text-xs text-gray-400">(edited)</span>}
+                                {selectedEntry.text}
+                                {selectedEntry.description && (
+                                    <span> {selectedEntry.description}</span>
+                                )}
+                                {selectedEntry.edited && (
+                                    <span className="text-xs text-gray-400"> (edited)</span>
+                                )}
                             </p>
                         )}
                         <hr className="mb-4" />
@@ -309,13 +404,13 @@ export default function ForumPage() {
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && !e.shiftKey) {
                                     e.preventDefault();
-                                    handleAddComment();
+                                    handleAddComment(selectedEntry.id);
                                 }
                             }}
                         />
                         <div className="flex justify-end">
                             <button
-                                onClick={handleAddComment}
+                                onClick={() => handleAddComment(selectedEntry.id)}
                                 className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 text-sm"
                             >
                                 Submit

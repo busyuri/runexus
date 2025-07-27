@@ -12,7 +12,8 @@ export default function Card({
                                  eventOwnerId,
                                  currentUserId,
                                  onEventUpdated,
-                                 onEventDeleted
+                                 onEventDeleted,
+                                isMyEvent
                              }) {
     const [showDetails, setShowDetails] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -24,6 +25,29 @@ export default function Card({
     });
 
     const isOwner = currentUserId === eventOwnerId;
+
+    const handleJoin = async () => {
+        try {
+            await api.post(`/events/${eventId}/join`, {
+                userId: currentUserId,
+            });
+            alert('You joined the event! 🎉');
+        } catch (err) {
+            console.error('Katılım başarısız:', err);
+        }
+    };
+
+    const handleLeave = async () => {
+        try {
+            await api.post(`/events/${eventId}/leave`, {
+                userId: currentUserId,
+            });
+            alert('You left the event.');
+            if (onEventDeleted) onEventDeleted(eventId); // MyEventsPage'den sil
+        } catch (err) {
+            console.error('Etkinlikten çıkılamadı:', err);
+        }
+    };
 
     const handleImageError = (e) => {
         e.target.src = 'https://via.placeholder.com/300x200/000000/FFFFFF?text=Runexus';
@@ -83,13 +107,14 @@ export default function Card({
                         <h2 className="font-semibold text-lg mb-1">{title}</h2>
                         <p className="text-sm text-gray-600 line-clamp-3">{description}</p>
                     </div>
-                    <div className="mt-4 flex gap-2">
+                    <div className="mt-4 flex justify-between gap-2">
                         <button
                             className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
-                            onClick={() => alert('You joined the event! 🎉')}
+                            onClick={handleJoin}
                         >
                             Join Event
                         </button>
+
                         <button
                             className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
                             onClick={() => setShowDetails(true)}
@@ -153,7 +178,7 @@ export default function Card({
                                     <div className="flex justify-between gap-2">
                                         <button
                                             onClick={handleUpdate}
-                                            className="bg-green-600 text-white px-4 py-2 rounded w-full"
+                                            className="bg-black text-white px-4 py-2 rounded w-full"
                                         >
                                             Save
                                         </button>
@@ -173,20 +198,23 @@ export default function Card({
                                     <p className="text-sm text-gray-600 mb-4">
                                         👥 Participants: {participantCount}/{participantLimit}
                                     </p>
-                                    <button
-                                        onClick={() => setShowDetails(false)}
-                                        className="mt-2 bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                                    >
-                                        Close
-                                    </button>
-                                    {isOwner && (
+                                    <div className="flex justify-between mt-6">
                                         <button
-                                            onClick={handleDelete}
-                                            className="mt-2 ml-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                                            onClick={() => setShowDetails(false)}
+                                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
                                         >
-                                            Delete Event
+                                            Close
                                         </button>
-                                    )}
+                                        {isOwner && (
+                                            <button
+                                                onClick={handleDelete}
+                                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                            >
+                                                Delete Event
+                                            </button>
+                                        )}
+                                    </div>
+
                                 </>
                             )}
                         </div>

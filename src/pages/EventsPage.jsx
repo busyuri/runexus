@@ -96,7 +96,7 @@ export default function EventsPage() {
                     />
                     <button
                         type="submit"
-                        className="bg-red-600 text-white px-4 py-2 rounded md:col-span-2"
+                        className="bg-orange-600 text-white px-4 py-2 rounded md:col-span-2"
                     >
                         Submit Event
                     </button>
