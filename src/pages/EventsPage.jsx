@@ -113,6 +113,17 @@ export default function EventsPage() {
                         participantLimit={event.participantLimit}
                         participantCount={event.participantCount}
                         eventDate={event.eventDate}
+                        eventId={event.eventId}
+                        eventOwnerId={event.userId}
+                        currentUserId={userId}
+                        onEventUpdated={(id, updatedData) =>
+                            setEvents((prev) =>
+                                prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
+                            )
+                        }
+                        onEventDeleted={(id) =>
+                            setEvents((prev) => prev.filter((ev) => ev.eventId !== id))
+                        }
                     />
                 ))}
             </div>

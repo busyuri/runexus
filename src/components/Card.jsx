@@ -1,17 +1,70 @@
 import React, { useState } from 'react';
+import api from '../api/api';
 
-export default function Card({ title, description, image, participantLimit, participantCount, eventDate}) {
+export default function Card({
+                                 title,
+                                 description,
+                                 image,
+                                 participantLimit,
+                                 participantCount,
+                                 eventDate,
+                                 eventId,
+                                 eventOwnerId,
+                                 currentUserId,
+                                 onEventUpdated,
+                                 onEventDeleted
+                             }) {
     const [showDetails, setShowDetails] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedEvent, setEditedEvent] = useState({
+        title,
+        description,
+        participantLimit,
+        eventDate: eventDate?.split('T')[0] || ''
+    });
+
+    const isOwner = currentUserId === eventOwnerId;
 
     const handleImageError = (e) => {
         e.target.src = 'https://via.placeholder.com/300x200/000000/FFFFFF?text=Runexus';
     };
 
-    const formattedDate = eventDate ? new Date(eventDate).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-    }) : 'Unknown Date';
+    const handleInputChange = (e) => {
+        setEditedEvent({ ...editedEvent, [e.target.name]: e.target.value });
+    };
+
+    const handleUpdate = async () => {
+        try {
+            const response = await api.put(`/events/${eventId}`, {
+                ...editedEvent,
+                participantLimit: parseInt(editedEvent.participantLimit),
+                userId: currentUserId
+            });
+            onEventUpdated(eventId, response.data);
+            setIsEditing(false);
+            setShowDetails(false);
+        } catch (err) {
+            console.error('Etkinlik güncellenemedi:', err);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await api.delete(`/events/${eventId}`);
+            onEventDeleted(eventId);
+            setShowDetails(false);
+        } catch (err) {
+            console.error('Etkinlik silinemedi:', err);
+        }
+    };
+
+    const formattedDate = eventDate
+        ? new Date(eventDate).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        })
+        : 'Unknown Date';
 
     return (
         <>
@@ -50,29 +103,96 @@ export default function Card({ title, description, image, participantLimit, part
             {/* Detaylı Açılır Modal */}
             {showDetails && (
                 <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center px-4">
-                    <div className="bg-white max-w-xl w-full rounded-xl shadow-lg overflow-hidden">
+                    <div className="bg-white max-w-xl w-full rounded-xl shadow-lg overflow-hidden relative">
+                        {/* Sağ üst Edit butonu */}
+                        {isOwner && !isEditing && (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="absolute top-2 right-2 bg-gray-300 text-black text-xs px-2 py-1 rounded hover:bg-gray-400"
+                            >
+                                Edit
+                            </button>
+                        )}
+
                         <img
                             src={image}
                             alt={title}
                             className="w-full h-64 object-cover"
                             onError={handleImageError}
                         />
+
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold text-orange-700 mb-2">{title}</h2>
-                            <p className="text-gray-700 mb-4">{description}</p>
-                            <p className="text-sm text-gray-500 mb-1">🗓️ {formattedDate}</p>
-                            <p className="text-sm text-gray-600 mb-4">👥 Participants: {participantCount}/{participantLimit}</p>
-                            <button
-                                onClick={() => setShowDetails(false)}
-                                className="mt-2 bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                            >
-                                Close
-                            </button>
+                            {isEditing ? (
+                                <>
+                                    <input
+                                        name="title"
+                                        value={editedEvent.title}
+                                        onChange={handleInputChange}
+                                        className="border p-2 rounded mb-2 w-full"
+                                    />
+                                    <textarea
+                                        name="description"
+                                        value={editedEvent.description}
+                                        onChange={handleInputChange}
+                                        className="border p-2 rounded mb-2 w-full"
+                                    />
+                                    <input
+                                        type="number"
+                                        name="participantLimit"
+                                        value={editedEvent.participantLimit}
+                                        onChange={handleInputChange}
+                                        className="border p-2 rounded mb-2 w-full"
+                                    />
+                                    <input
+                                        type="date"
+                                        name="eventDate"
+                                        value={editedEvent.eventDate}
+                                        onChange={handleInputChange}
+                                        className="border p-2 rounded mb-4 w-full"
+                                    />
+                                    <div className="flex justify-between gap-2">
+                                        <button
+                                            onClick={handleUpdate}
+                                            className="bg-green-600 text-white px-4 py-2 rounded w-full"
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            onClick={() => setIsEditing(false)}
+                                            className="bg-gray-400 text-white px-4 py-2 rounded w-full"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <h2 className="text-2xl font-bold text-orange-700 mb-2">{title}</h2>
+                                    <p className="text-gray-700 mb-4">{description}</p>
+                                    <p className="text-sm text-gray-500 mb-1">🗓️ {formattedDate}</p>
+                                    <p className="text-sm text-gray-600 mb-4">
+                                        👥 Participants: {participantCount}/{participantLimit}
+                                    </p>
+                                    <button
+                                        onClick={() => setShowDetails(false)}
+                                        className="mt-2 bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                    >
+                                        Close
+                                    </button>
+                                    {isOwner && (
+                                        <button
+                                            onClick={handleDelete}
+                                            className="mt-2 ml-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                                        >
+                                            Delete Event
+                                        </button>
+                                    )}
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
             )}
-
         </>
     );
 }
