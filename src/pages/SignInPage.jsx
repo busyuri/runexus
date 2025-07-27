@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/api';
+import { useUser } from '../context/UserContext';
 
 
 export default function SignInPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+
+    const { setUser } = useUser();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,20 +20,21 @@ export default function SignInPage() {
                 password
             });
 
-            // 2️⃣ JWT token varsa buradan al
             const token = response.data.token;
-            localStorage.setItem('token', token);
+            const user = response.data.user; // ✨
 
-            // 3️⃣ Axios'a default header olarak ekle
+            localStorage.setItem('token', token);
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            // 4️⃣ Başarıyla giriş yaptıysa yönlendir
+            setUser(user);
+
             navigate('/events');
         } catch (error) {
             console.error('Giriş başarısız:', error);
             alert("Giriş başarısız: " + (error.response?.data?.message || error.message));
         }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

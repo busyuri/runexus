@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../api/api'; // kendi yoluna göre güncelle
 
 export default function SignUpPage() {
     const [form, setForm] = useState({
@@ -8,17 +8,26 @@ export default function SignUpPage() {
         email: '',
         password: '',
     });
+    const navigate = useNavigate(); // yönlendirme için
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Kayıt formu:', form);
-        // Buraya kayıt API'si eklenebilir
-    };
 
+        try {
+            const res = await api.post('/auth/register', form);
+            console.log('Kayıt başarılı:', res.data);
+
+            // navigation after signup
+            navigate('/signin');
+        } catch (err) {
+            console.error('Kayıt sırasında hata:', err);
+            alert('Kayıt başarısız. Lütfen tekrar deneyin.');
+        }
+    };
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
             <div className="max-w-md w-full bg-white p-10 rounded-xl shadow">
