@@ -27,13 +27,19 @@ export default function EventsPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!userId || !token) {
+            window.location.href = "/signin";
+            return;
+        }
+
         try {
             const response = await api.post('/events', {
                 ...newEvent,
                 participantLimit: parseInt(newEvent.participantLimit),
                 userId: parseInt(userId),
             });
-            setEvents([response.data, ...events]); // yeni etkinliği en başa ekle
+            setEvents([response.data, ...events]);
             setNewEvent({ title: '', description: '', participantLimit: '', eventDate: '' });
             setShowForm(false);
         } catch (err) {
@@ -41,18 +47,21 @@ export default function EventsPage() {
         }
     };
 
+
     return (
         <main className="bg-gray-100 min-h-screen py-10 px-6">
             <div className="flex items-center justify-between mb-10">
                 <h1 className="text-3xl font-bold text-black">Events</h1>
-                {userId && (
+                {userId ? (
                     <button
                         onClick={() => setShowForm(!showForm)}
                         className="bg-white hover:bg-gray-200 text-black px-4 py-2 rounded shadow"
                     >
                         {showForm ? 'Cancel' : '+'}
                     </button>
-                )}
+                ) : null}
+
+
             </div>
 
             {showForm && (

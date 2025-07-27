@@ -27,6 +27,11 @@ export default function Card({
     const isOwner = currentUserId === eventOwnerId;
 
     const handleJoin = async () => {
+        if (!currentUserId) {
+            window.location.href = "/signin";
+            return;
+        }
+
         try {
             await api.post(`/events/${eventId}/join`, {
                 userId: currentUserId,
@@ -36,6 +41,7 @@ export default function Card({
             console.error('Katılım başarısız:', err);
         }
     };
+
 
     const handleLeave = async () => {
         try {
