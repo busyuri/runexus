@@ -4,6 +4,7 @@ import api from '../api/api';
 
 export default function EventsPage() {
     const [events, setEvents] = useState([]);
+    const [joinedEventIds, setJoinedEventIds] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [newEvent, setNewEvent] = useState({
         title: '',
@@ -17,9 +18,22 @@ export default function EventsPage() {
 
     useEffect(() => {
         api.get('/events')
-            .then((res) => setEvents(res.data))
+            .then((res) => {
+                console.log('Event verisi:', res.data); // 👈 BAK BU
+                setEvents(res.data);
+            })
             .catch((err) => console.error('Etkinlikler alınamadı:', err));
+
+        if (userId) {
+            api.get(`/events/myevents?userId=${userId}`)
+                .then((res) => {
+                    const ids = res.data.map(event => event.eventId);
+                    setJoinedEventIds(ids);
+                })
+                .catch((err) => console.error('Katıldığın etkinlikler alınamadı:', err));
+        }
     }, []);
+
 
     const handleChange = (e) => {
         setNewEvent({ ...newEvent, [e.target.name]: e.target.value });
@@ -125,6 +139,7 @@ export default function EventsPage() {
                         eventId={event.eventId}
                         eventOwnerId={event.userId}
                         currentUserId={userId}
+                        isJoined={joinedEventIds.includes(event.eventId)} // <-- 🔥 Burası eklendi
                         onEventUpdated={(id, updatedData) =>
                             setEvents((prev) =>
                                 prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
@@ -134,6 +149,7 @@ export default function EventsPage() {
                             setEvents((prev) => prev.filter((ev) => ev.eventId !== id))
                         }
                     />
+
                 ))}
             </div>
         </main>

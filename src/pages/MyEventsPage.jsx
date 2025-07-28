@@ -4,16 +4,22 @@ import api from '../api/api';
 
 export default function MyEventsPage() {
     const [myEvents, setMyEvents] = useState([]);
+    const [joinedEventIds, setJoinedEventIds] = useState([]);
 
     useEffect(() => {
-        api.get('/events/myevents')
+        const userId = localStorage.getItem("userId");
+
+        api.get(`/events/myevents?userId=${userId}`)
             .then((res) => {
                 setMyEvents(res.data);
+                const ids = res.data.map(event => event.eventId);
+                setJoinedEventIds(ids); // 👈 bu satırı ekle
             })
             .catch((err) => {
                 console.error('Katıldığınız etkinlikler alınamadı:', err);
             });
     }, []);
+
 
     return (
         <main className="bg-gray-100 min-h-screen py-10 px-6">
@@ -41,6 +47,7 @@ export default function MyEventsPage() {
                                 setMyEvents((prev) => prev.filter((ev) => ev.eventId !== id))
                             }
                             isMyEvent={true}
+                            isJoined={joinedEventIds.includes(event.eventId)}
                         />
                     ))}
                 </div>

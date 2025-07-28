@@ -13,7 +13,8 @@ export default function Card({
                                  currentUserId,
                                  onEventUpdated,
                                  onEventDeleted,
-                                isMyEvent
+                                 isMyEvent,
+                                 isJoined // 🔥 bunu ekle
                              }) {
     const [showDetails, setShowDetails] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -33,9 +34,7 @@ export default function Card({
         }
 
         try {
-            await api.post(`/events/${eventId}/join`, {
-                userId: currentUserId,
-            });
+            await api.post(`/events/${eventId}/join?userId=${currentUserId}`);
             alert('You joined the event! 🎉');
         } catch (err) {
             console.error('Katılım başarısız:', err);
@@ -45,11 +44,9 @@ export default function Card({
 
     const handleLeave = async () => {
         try {
-            await api.post(`/events/${eventId}/leave`, {
-                userId: currentUserId,
-            });
+            await api.post(`/events/${eventId}/leave?userId=${currentUserId}`);
             alert('You left the event.');
-            if (onEventDeleted) onEventDeleted(eventId); // MyEventsPage'den sil
+            if (onEventDeleted) onEventDeleted(eventId);
         } catch (err) {
             console.error('Etkinlikten çıkılamadı:', err);
         }
@@ -115,11 +112,15 @@ export default function Card({
                     </div>
                     <div className="mt-4 flex justify-between gap-2">
                         <button
-                            className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
+                            className={`bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700 ${
+                                isJoined ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
                             onClick={handleJoin}
+                            disabled={isJoined}
                         >
-                            Join Event
+                            {isJoined ? 'Already Joined' : 'Join Event'}
                         </button>
+
 
                         <button
                             className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
