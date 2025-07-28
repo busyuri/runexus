@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="101f5342-f949-4d18-8d75-534dfb5eee53" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/SignInPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/SignInPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/SignUpPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/SignUpPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.vite/deps/_metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/.vite/deps/_metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Card.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Card.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/EventsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/EventsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/MyEventsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/MyEventsPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +72,8 @@
       <updated>1753445096002</updated>
       <workItem from="1753445097572" duration="4747000" />
       <workItem from="1753533495121" duration="11213000" />
-      <workItem from="1753625571062" duration="14389000" />
+      <workItem from="1753625571062" duration="15160000" />
+      <workItem from="1753701684651" duration="2676000" />
     </task>
     <servers />
   </component>

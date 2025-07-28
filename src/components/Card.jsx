@@ -137,14 +137,12 @@ export default function Card({
                 <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center px-4">
                     <div className="bg-white max-w-xl w-full rounded-xl shadow-lg overflow-hidden relative">
                         {/* Sağ üst Edit butonu */}
-                        {isOwner && !isEditing && (
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="absolute top-2 right-2 bg-gray-300 text-black text-xs px-2 py-1 rounded hover:bg-gray-400"
-                            >
-                                Edit
-                            </button>
-                        )}
+                        <button
+                            onClick={() => setShowDetails(false)}
+                            className="absolute top-2 right-2 bg-gray-300 text-gray-800 text-xs px-2 py-1 rounded hover:bg-gray-400"
+                        >
+                            ✕
+                        </button>
 
                         <img
                             src={image}
@@ -206,21 +204,45 @@ export default function Card({
                                         👥 Participants: {participantCount}/{participantLimit}
                                     </p>
                                     <div className="flex justify-between mt-6">
-                                        <button
-                                            onClick={() => setShowDetails(false)}
-                                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                                        >
-                                            Close
-                                        </button>
                                         {isOwner && (
-                                            <button
-                                                onClick={handleDelete}
-                                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                                            >
-                                                Delete Event
-                                            </button>
+                                            <>
+                                                <button
+                                                    onClick={() => setIsEditing(true)}
+                                                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={handleDelete}
+                                                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                                >
+                                                    Delete Event
+                                                </button>
+                                            </>
                                         )}
                                     </div>
+                                    {!isOwner && (
+                                        <div className="mt-4">
+                                            {isJoined ? (
+                                                <button
+                                                    onClick={handleLeave}
+                                                    className="bg-red-600 text-white px-4 py-2 rounded w-full hover:bg-red-700"
+                                                >
+                                                    Leave Event
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={handleJoin}
+                                                    className="bg-orange-600 text-white px-4 py-2 rounded w-full hover:bg-orange-700"
+                                                >
+                                                    Join Event
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+
+
 
                                 </>
                             )}

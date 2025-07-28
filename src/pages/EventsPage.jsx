@@ -25,13 +25,14 @@ export default function EventsPage() {
             .catch((err) => console.error('Etkinlikler alınamadı:', err));
 
         if (userId) {
-            api.get(`/events/myevents?userId=${userId}`)
+            api.get(`/events/joined?userId=${userId}`)
                 .then((res) => {
                     const ids = res.data.map(event => event.eventId);
                     setJoinedEventIds(ids);
                 })
                 .catch((err) => console.error('Katıldığın etkinlikler alınamadı:', err));
         }
+
     }, []);
 
 

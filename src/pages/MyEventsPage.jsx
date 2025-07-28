@@ -5,20 +5,20 @@ import api from '../api/api';
 export default function MyEventsPage() {
     const [myEvents, setMyEvents] = useState([]);
     const [joinedEventIds, setJoinedEventIds] = useState([]);
+    const userId = parseInt(localStorage.getItem("userId")); // ✅ Bunu en üste ekle
 
     useEffect(() => {
-        const userId = localStorage.getItem("userId");
-
-        api.get(`/events/myevents?userId=${userId}`)
+        api.get(`/events/joined?userId=${userId}`) // ✅ Şimdi tanımlı
             .then((res) => {
                 setMyEvents(res.data);
                 const ids = res.data.map(event => event.eventId);
-                setJoinedEventIds(ids); // 👈 bu satırı ekle
+                setJoinedEventIds(ids);
             })
             .catch((err) => {
                 console.error('Katıldığınız etkinlikler alınamadı:', err);
             });
     }, []);
+
 
 
     return (
