@@ -34,6 +34,9 @@ export default function EventsPage() {
         }
     }, []);
 
+    const handleEventJoined = (eventId) => {
+        setJoinedEventIds((prev) => [...prev, eventId]);
+    };
 
     const handleChange = (e) => {
         setNewEvent({ ...newEvent, [e.target.name]: e.target.value });
@@ -140,6 +143,7 @@ export default function EventsPage() {
                         eventOwnerId={event.userId}
                         currentUserId={userId}
                         isJoined={joinedEventIds.includes(event.eventId)} // <-- 🔥 Burası eklendi
+                        onEventJoined={handleEventJoined}
                         onEventUpdated={(id, updatedData) =>
                             setEvents((prev) =>
                                 prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))

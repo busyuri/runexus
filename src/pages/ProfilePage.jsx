@@ -1,23 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
+import api from '../api/api';
 
 export default function ProfilePage() {
     const { user } = useUser();
+    const [activeTab, setActiveTab] = useState("profile");
 
-    // user null ise yükleniyor göster
     if (!user) return <div className="p-6">Loading...</div>;
 
-    // Varsayılan state'leri user'dan al
-    const [activeTab, setActiveTab] = useState("profile");
-    const [username, setUsername] = useState(user.username);
-    const [newUsername, setNewUsername] = useState("");
-    const [profileImage, setProfileImage] = useState(user.image || "https://i.pravatar.cc/150?img=3");
+    const [formData, setFormData] = useState({
+        name: user.name || '',
+        surname: user.surname || '',
+        gender: user.gender || '',
+        birthday: user.birthday || '',
+        pace: user.pace || 0,
+        email: user.email || '',
+        profileImage: 'https://i.pravatar.cc/150?img=3',
+    });
 
-    const handleUsernameChange = () => {
-        if (newUsername.trim()) {
-            setUsername(newUsername);
-            setNewUsername("");
-            alert("Kullanıcı adı güncellendi!");
+    const [age, setAge] = useState(user.age || 0);
+
+    useEffect(() => {
+        if (formData.birthday) {
+            const today = new Date();
+            const birthDate = new Date(formData.birthday);
+            let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                calculatedAge--;
+            }
+            setAge(calculatedAge);
+        }
+    }, [formData.birthday]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleProfileUpdate = async () => {
+        try {
+            const userId = user?.userId || parseInt(localStorage.getItem("userId"));
+            if (!userId) {
+                alert("Giriş yapılmamış.");
+                return;
+            }
+            await api.put(`/users/${userId}`, {
+                ...formData,
+                age,
+                userId: userId,
+            });
+            alert("Profile updated successfully!");
+        } catch (err) {
+            console.error("Update error:", err);
+            alert("Update failed: " + (err.response?.data?.message || err.message));
         }
     };
 
@@ -25,7 +61,7 @@ export default function ProfilePage() {
         const file = e.target.files[0];
         if (file) {
             const imageURL = URL.createObjectURL(file);
-            setProfileImage(imageURL);
+            setFormData((prev) => ({ ...prev, profileImage: imageURL }));
         }
     };
 
@@ -33,37 +69,27 @@ export default function ProfilePage() {
         <div className="min-h-screen flex bg-gray-50">
             {/* Sidebar */}
             <div className="w-64 bg-white shadow-md p-6">
-                <h2 className="text-xl font-semibold mb-4">Settings</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Settings</h2>
                 <ul className="space-y-3 text-gray-700">
                     <li
                         onClick={() => setActiveTab("profile")}
-                        className={`cursor-pointer ${activeTab === "profile" ? "text-blue-600 font-medium" : "hover:text-blue-500"}`}
+                        className={`cursor-pointer ${activeTab === "profile" ? "text-orange-600 font-semibold" : "hover:text-orange-600"}`}
                     >
                         Profile
-                    </li>
-                    <li
-                        onClick={() => setActiveTab("privacy")}
-                        className={`cursor-pointer ${activeTab === "privacy" ? "text-blue-600 font-medium" : "hover:text-blue-500"}`}
-                    >
-                        Privacy
-                    </li>
-                    <li
-                        onClick={() => setActiveTab("notifications")}
-                        className={`cursor-pointer ${activeTab === "notifications" ? "text-blue-600 font-medium" : "hover:text-blue-500"}`}
-                    >
-                        Notifications
                     </li>
                 </ul>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 p-8">
+            <div className="flex-1 p-10">
                 {activeTab === "profile" && (
                     <>
-                        <h1 className="text-2xl font-bold text-blue-700 mb-6">Profile Settings</h1>
-                        <div className="mb-6">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-8">Profile Settings</h1>
+
+                        {/* Profile Image */}
+                        <div className="mb-8">
                             <img
-                                src={profileImage}
+                                src={formData.profileImage}
                                 alt="Profile"
                                 className="w-32 h-32 rounded-full border shadow-md object-cover"
                             />
@@ -77,75 +103,93 @@ export default function ProfilePage() {
                                 />
                             </div>
                         </div>
-                        <div className="mb-6">
-                            <label className="block text-gray-700 mb-1">Current Username</label>
-                            <p className="mb-2 font-semibold">{username}</p>
-                            <input
-                                type="text"
-                                value={newUsername}
-                                onChange={(e) => setNewUsername(e.target.value)}
-                                placeholder="New username"
-                                className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full mb-2"
-                            />
-                            <button
-                                onClick={handleUsernameChange}
-                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-                            >
-                                Update Username
-                            </button>
-                        </div>
-                    </>
-                )}
 
-                {activeTab === "privacy" && (
-                    <>
-                        <h1 className="text-2xl font-bold text-blue-700 mb-6">Privacy Settings</h1>
-                        <div className="mb-4">
-                            <label className="flex items-center space-x-2">
+                        {/* User Info */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="text-gray-700">First Name</label>
                                 <input
-                                    type="checkbox"
-                                    checked={isPrivate}
-                                    onChange={() => setIsPrivate(!isPrivate)}
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
                                 />
-                                <span>Make my profile private</span>
-                            </label>
-                        </div>
-                        <div className="mb-4">
-                            <label className="flex items-center space-x-2">
-                                <input
-                                    type="checkbox"
-                                    checked={twoFactorEnabled}
-                                    onChange={() => setTwoFactorEnabled(!twoFactorEnabled)}
-                                />
-                                <span>Enable two-factor authentication (2FA)</span>
-                            </label>
-                        </div>
-                    </>
-                )}
+                            </div>
 
-                {activeTab === "notifications" && (
-                    <>
-                        <h1 className="text-2xl font-bold text-blue-700 mb-6">Notification Settings</h1>
-                        <div className="mb-4">
-                            <label className="flex items-center space-x-2">
+                            <div>
+                                <label className="text-gray-700">Last Name</label>
                                 <input
-                                    type="checkbox"
-                                    checked={emailNotif}
-                                    onChange={() => setEmailNotif(!emailNotif)}
+                                    name="surname"
+                                    value={formData.surname}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
                                 />
-                                <span>Email Notifications</span>
-                            </label>
-                        </div>
-                        <div className="mb-4">
-                            <label className="flex items-center space-x-2">
+                            </div>
+
+                            <div>
+                                <label className="text-gray-700">Gender</label>
+                                <select
+                                    name="gender"
+                                    value={formData.gender}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                >
+                                    <option value="">Select</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="text-gray-700">Birthday</label>
                                 <input
-                                    type="checkbox"
-                                    checked={smsNotif}
-                                    onChange={() => setSmsNotif(!smsNotif)}
+                                    type="date"
+                                    name="birthday"
+                                    value={formData.birthday}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
                                 />
-                                <span>SMS Notifications</span>
-                            </label>
+                            </div>
+
+                            <div>
+                                <label className="text-gray-700">Pace (min/km)</label>
+                                <input
+                                    type="number"
+                                    name="pace"
+                                    step="0.1"
+                                    value={formData.pace}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    value={formData.email}
+                                    readOnly
+                                    className="w-full border bg-gray-100 text-gray-600 px-3 py-2 rounded-md"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-gray-700">Age</label>
+                                <input
+                                    value={age}
+                                    readOnly
+                                    className="w-full border bg-gray-100 text-gray-600 px-3 py-2 rounded-md"
+                                />
+                            </div>
                         </div>
+
+                        <button
+                            onClick={handleProfileUpdate}
+                            className="mt-8 bg-orange-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-orange-700 transition"
+                        >
+                            Save Changes
+                        </button>
                     </>
                 )}
             </div>

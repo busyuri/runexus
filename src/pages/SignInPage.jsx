@@ -20,15 +20,18 @@ export default function SignInPage() {
                 password
             });
 
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("userId", response.data.userId);
-            localStorage.setItem("username", response.data.name); // opsiyonel
-            localStorage.setItem("role", response.data.role);
-
             const token = response.data.token;
-            const user = response.data.user; // ✨
+            const user = {
+                id: response.data.userId,
+                name: response.data.name,
+                role: response.data.role
+            };
 
-            localStorage.setItem('token', token);
+            localStorage.setItem("token", token);
+            localStorage.setItem("userId", user.id);
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("role", user.role);
+
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             setUser(user);
@@ -39,6 +42,7 @@ export default function SignInPage() {
             alert("Giriş başarısız: " + (error.response?.data?.message || error.message));
         }
     };
+
 
 
     return (

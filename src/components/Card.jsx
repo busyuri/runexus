@@ -13,6 +13,7 @@ export default function Card({
                                  currentUserId,
                                  onEventUpdated,
                                  onEventDeleted,
+                                 onEventJoined,
                                  isMyEvent,
                                  isJoined // 🔥 bunu ekle
                              }) {
@@ -36,10 +37,17 @@ export default function Card({
         try {
             await api.post(`/events/${eventId}/join?userId=${currentUserId}`);
             alert('You joined the event! 🎉');
+
+            if (onEventJoined) {
+                onEventJoined(eventId); // 👉 EventsPage tarafındaki joinedEventIds'e ekler
+            }
+
         } catch (err) {
             console.error('Katılım başarısız:', err);
         }
     };
+
+
 
 
     const handleLeave = async () => {
