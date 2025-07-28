@@ -20,6 +20,11 @@ export default function SignInPage() {
                 password
             });
 
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("userId", response.data.userId);
+            localStorage.setItem("username", response.data.name); // opsiyonel
+            localStorage.setItem("role", response.data.role);
+
             const token = response.data.token;
             const user = response.data.user; // ✨
 

@@ -71,16 +71,25 @@ export default function ForumPage() {
 
 
 
-    const handleCardClick = (entry) => {
-        setSelectedEntry({
-            ...entry,
-            comments: entry.comments || [],
-        });
+    const handleCardClick = async (entry) => {
+        try {
+            const commentRes = await api.get(`/comments/entry/${entry.id}`);
+
+            setSelectedEntry({
+                ...entry,
+                comments: commentRes.data,
+            });
+
+        } catch (err) {
+            console.error("Yorumlar yüklenemedi:", err);
+        }
+
         setEditingEntry(null);
         setEditingText("");
         setDropdownOpenId(null);
         setCommentDropdown(null);
     };
+
 
 
     const handleAddComment = (entryId) => {
@@ -91,12 +100,16 @@ export default function ForumPage() {
 
         if (!newComment.trim()) return;
 
-        api.post(`/entries/${entryId}/comments`, { text: newComment })
+        api.post("/comments", {
+            userId: currentUserId,
+            entryId: entryId,
+            content: newComment
+        })
             .then(res => {
                 const savedComment = {
                     ...res.data,
                     userId: currentUserId,
-                    user: "You",
+                    user: "You", // isteğe bağlı
                 };
 
                 const updatedEntries = entries.map((e) =>
@@ -125,6 +138,8 @@ export default function ForumPage() {
 
 
 
+
+
     const handleDeleteEntry = (id) => {
         setEntries(entries.filter((e) => e.id !== id));
         setSelectedEntry(null);
@@ -147,13 +162,13 @@ export default function ForumPage() {
 
     const handleSaveEntryEdit = () => {
         const updated = entries.map((e) =>
-            e.id === editingEntry ? { ...e, text: editingText, edited: true } : e
+            e.id === editingEntry ? { ...e, content: editingText, edited: true } : e
         );
         setEntries(updated);
         if (selectedEntry?.id === editingEntry) {
             setSelectedEntry((prev) => ({
                 ...prev,
-                text: editingText,
+                content: editingText,
                 edited: true,
             }));
         }
@@ -166,7 +181,7 @@ export default function ForumPage() {
                 ? {
                     ...e,
                     comments: e.comments.map((c) =>
-                        c.id === editingCommentId ? { ...c, text: editingCommentText, edited: true } : c
+                        c.id === editingCommentId ? { ...c, content: editingCommentText, edited: true } : c
                     ),
                 }
                 : e
@@ -175,7 +190,7 @@ export default function ForumPage() {
         setSelectedEntry((prev) => ({
             ...prev,
             comments: prev.comments.map((c) =>
-                c.id === editingCommentId ? { ...c, text: editingCommentText, edited: true } : c
+                c.id === editingCommentId ? { ...c, content: editingCommentText, edited: true } : c
             ),
         }));
         setEditingCommentId(null);
@@ -359,7 +374,7 @@ export default function ForumPage() {
                                             </>
                                         ) : (
                                             <p className="text-sm">
-                                                <strong>{c.user}:</strong> {c.text}{" "}
+                                                <strong>{c.userName || "Unknown"}:</strong> {c.content}{" "}
                                                 {c.edited && <span className="text-xs text-gray-400">(edited)</span>}
                                             </p>
                                         )}
@@ -375,7 +390,7 @@ export default function ForumPage() {
                                                     <button
                                                         onClick={() => {
                                                             setEditingCommentId(c.id);
-                                                            setEditingCommentText(c.text);
+                                                            setEditingCommentText(c.content);
                                                             setCommentDropdown(null);
                                                         }}
                                                         className="block px-4 py-1 text-sm hover:bg-gray-100 w-full text-left"
