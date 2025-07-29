@@ -44,7 +44,7 @@ export default function Card({
                 participantCount: countRes.data,
                 action: 'join'
             });
-            alert('You joined the event! 🎉');
+
         } catch (err) {
             console.error('Katılım başarısız:', err);
         }
@@ -60,7 +60,7 @@ export default function Card({
                 action: 'leave'
             });
 
-            alert('You left the event.');
+
         } catch (err) {
             console.error('Etkinlikten çıkılamadı:', err);
         }
