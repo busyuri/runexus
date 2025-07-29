@@ -13,6 +13,7 @@ export default function EventsPage() {
         eventDate: '',
     });
 
+
     const userId = parseInt(localStorage.getItem("userId"));
     const token = localStorage.getItem("token");
 

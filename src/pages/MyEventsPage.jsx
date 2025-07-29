@@ -32,7 +32,7 @@ export default function MyEventsPage() {
 
     return (
         <main className="bg-gray-100 min-h-screen py-10 px-6">
-            <h1 className="text-3xl font-bold mb-6 text-black">My Joined Events</h1>
+            <h1 className="text-3xl font-bold mb-6 text-black">My Events</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {joinedEvents.map((event) => (
                     <Card
