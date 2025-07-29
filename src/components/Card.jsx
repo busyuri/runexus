@@ -90,13 +90,21 @@ export default function Card({
 
     const handleDelete = async () => {
         try {
-            await api.delete(`/events/${eventId}`);
+            await api.delete(`/events/${eventId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+
+
             onEventDeleted(eventId);
             setShowDetails(false);
         } catch (err) {
             console.error('Etkinlik silinemedi:', err);
         }
     };
+
 
     const formattedDate = eventDate
         ? new Date(eventDate).toLocaleDateString('en-GB', {

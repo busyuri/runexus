@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: '/api',
-    withCredentials: true, // isteğe bağlı, token için gerekli değil
+    baseURL: '/api', // isteğe bağlı, token için gerekli değil
 });
 
 // 🔥 Token'ı otomatik olarak tüm isteklere ekle
