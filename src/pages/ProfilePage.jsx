@@ -195,4 +195,8 @@ export default function ProfilePage() {
             </div>
         </div>
     );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3

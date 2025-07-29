@@ -23,7 +23,11 @@ export default function SignInPage() {
             const token = response.data.token;
             const user = {
                 id: response.data.userId,
+<<<<<<< HEAD
                 name: response.data.name || '' ,
+=======
+                name: response.data.name,
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
                 role: response.data.role
             };
 
@@ -36,12 +40,16 @@ export default function SignInPage() {
 
             setUser(user);
 
+<<<<<<< HEAD
             console.log("API yanıtı:", response.data);
             console.log("userId:", response.data.userId);
 
             navigate('/events');
 
 
+=======
+            navigate('/events');
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
         } catch (error) {
             console.error('Giriş başarısız:', error);
             alert("Giriş başarısız: " + (error.response?.data?.message || error.message));
@@ -114,4 +122,8 @@ export default function SignInPage() {
             </div>
         </div>
     );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3

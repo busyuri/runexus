@@ -12,6 +12,7 @@ export default function EventsPage() {
         participantLimit: '',
         eventDate: '',
     });
+<<<<<<< HEAD
     const handleJoinUpdate = (id, updatedData) => {
         setEvents((prev) =>
             prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
@@ -33,12 +34,15 @@ export default function EventsPage() {
 
 
 
+=======
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
 
     const userId = parseInt(localStorage.getItem("userId"));
     const token = localStorage.getItem("token");
 
     useEffect(() => {
         api.get('/events')
+<<<<<<< HEAD
             .then(async (res) => {
                 console.log('Event verisi:', res.data);
 
@@ -58,11 +62,20 @@ export default function EventsPage() {
                 );
 
                 setEvents(eventsWithCounts); // ✅ Artık sayı içeren hali setliyoruz
+=======
+            .then((res) => {
+                console.log('Event verisi:', res.data); // 👈 BAK BU
+                setEvents(res.data);
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
             })
             .catch((err) => console.error('Etkinlikler alınamadı:', err));
 
         if (userId) {
+<<<<<<< HEAD
             api.get(`/events/joined?userId=${userId}`)
+=======
+            api.get(`/events/myevents?userId=${userId}`)
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
                 .then((res) => {
                     const ids = res.data.map(event => event.eventId);
                     setJoinedEventIds(ids);
@@ -71,7 +84,13 @@ export default function EventsPage() {
         }
     }, []);
 
+<<<<<<< HEAD
 
+=======
+    const handleEventJoined = (eventId) => {
+        setJoinedEventIds((prev) => [...prev, eventId]);
+    };
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
 
     const handleChange = (e) => {
         setNewEvent({ ...newEvent, [e.target.name]: e.target.value });
@@ -177,6 +196,7 @@ export default function EventsPage() {
                         eventId={event.eventId}
                         eventOwnerId={event.userId}
                         currentUserId={userId}
+<<<<<<< HEAD
                         isJoined={joinedEventIds.includes(event.eventId)}
                         onEventUpdated={(id, updatedData) => {
                             // Join işlemi için ayrı güncelleme yap
@@ -191,12 +211,24 @@ export default function EventsPage() {
                                 );
                             }
                         }}
+=======
+                        isJoined={joinedEventIds.includes(event.eventId)} // <-- 🔥 Burası eklendi
+                        onEventJoined={handleEventJoined}
+                        onEventUpdated={(id, updatedData) =>
+                            setEvents((prev) =>
+                                prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
+                            )
+                        }
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
                         onEventDeleted={(id) =>
                             setEvents((prev) => prev.filter((ev) => ev.eventId !== id))
                         }
                     />
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
                 ))}
             </div>
         </main>

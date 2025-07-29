@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
+=======
+import React, { useState } from 'react';
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
 import api from '../api/api';
 
 export default function Card({
@@ -13,12 +17,21 @@ export default function Card({
                                  currentUserId,
                                  onEventUpdated,
                                  onEventDeleted,
+<<<<<<< HEAD
                                  isMyEvent,
                                  isJoined
                              }) {
     const [showDetails, setShowDetails] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
+=======
+                                 onEventJoined,
+                                 isMyEvent,
+                                 isJoined // 🔥 bunu ekle
+                             }) {
+    const [showDetails, setShowDetails] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
     const [editedEvent, setEditedEvent] = useState({
         title,
         description,
@@ -28,7 +41,10 @@ export default function Card({
 
     const isOwner = currentUserId === eventOwnerId;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
     const handleJoin = async () => {
         if (!currentUserId) {
             window.location.href = "/signin";
@@ -37,6 +53,7 @@ export default function Card({
 
         try {
             await api.post(`/events/${eventId}/join?userId=${currentUserId}`);
+<<<<<<< HEAD
             const countRes = await api.get(`/events/${eventId}/participantCount`);
 
 
@@ -44,12 +61,20 @@ export default function Card({
                 participantCount: countRes.data,
                 action: 'join'
             });
+=======
+            alert('You joined the event! 🎉');
+
+            if (onEventJoined) {
+                onEventJoined(eventId); // 👉 EventsPage tarafındaki joinedEventIds'e ekler
+            }
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
 
         } catch (err) {
             console.error('Katılım başarısız:', err);
         }
     };
 
+<<<<<<< HEAD
     const handleLeave = async () => {
         try {
             await api.post(`/events/${eventId}/leave?userId=${currentUserId}`);
@@ -61,6 +86,16 @@ export default function Card({
             });
 
 
+=======
+
+
+
+    const handleLeave = async () => {
+        try {
+            await api.post(`/events/${eventId}/leave?userId=${currentUserId}`);
+            alert('You left the event.');
+            if (onEventDeleted) onEventDeleted(eventId);
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
         } catch (err) {
             console.error('Etkinlikten çıkılamadı:', err);
         }
@@ -91,12 +126,16 @@ export default function Card({
 
     const handleDelete = async () => {
         try {
+<<<<<<< HEAD
             await api.delete(`/events/${eventId}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
+=======
+            await api.delete(`/events/${eventId}`);
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
             onEventDeleted(eventId);
             setShowDetails(false);
         } catch (err) {
@@ -139,6 +178,11 @@ export default function Card({
                         >
                             {isJoined ? 'Already Joined' : 'Join Event'}
                         </button>
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
                         <button
                             className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
                             onClick={() => setShowDetails(true)}
@@ -153,12 +197,24 @@ export default function Card({
             {showDetails && (
                 <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center px-4">
                     <div className="bg-white max-w-xl w-full rounded-xl shadow-lg overflow-hidden relative">
+<<<<<<< HEAD
                         <button
                             onClick={() => setShowDetails(false)}
                             className="absolute top-2 right-2 bg-gray-300 text-gray-800 text-xs px-2 py-1 rounded hover:bg-gray-400"
                         >
                             ✕
                         </button>
+=======
+                        {/* Sağ üst Edit butonu */}
+                        {isOwner && !isEditing && (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="absolute top-2 right-2 bg-gray-300 text-black text-xs px-2 py-1 rounded hover:bg-gray-400"
+                            >
+                                Edit
+                            </button>
+                        )}
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
 
                         <img
                             src={image}
@@ -217,6 +273,7 @@ export default function Card({
                                     <p className="text-gray-700 mb-4">{description}</p>
                                     <p className="text-sm text-gray-500 mb-1">🗓️ {formattedDate}</p>
                                     <p className="text-sm text-gray-600 mb-4">
+<<<<<<< HEAD
                                         👥 Participants: {typeof participantCount === 'number' ? participantCount : 0}/{participantLimit}
                                     </p>
 
@@ -258,6 +315,27 @@ export default function Card({
                                             )}
                                         </div>
                                     )}
+=======
+                                        👥 Participants: {participantCount}/{participantLimit}
+                                    </p>
+                                    <div className="flex justify-between mt-6">
+                                        <button
+                                            onClick={() => setShowDetails(false)}
+                                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                        >
+                                            Close
+                                        </button>
+                                        {isOwner && (
+                                            <button
+                                                onClick={handleDelete}
+                                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                            >
+                                                Delete Event
+                                            </button>
+                                        )}
+                                    </div>
+
+>>>>>>> ac03ff2292459be05d0e9afe03b22e3ade267ae3
                                 </>
                             )}
                         </div>
