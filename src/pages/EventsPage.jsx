@@ -12,6 +12,26 @@ export default function EventsPage() {
         participantLimit: '',
         eventDate: '',
     });
+    const handleJoinUpdate = (id, updatedData) => {
+        setEvents((prev) =>
+            prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
+        );
+
+        // 👉 joined listesine ekle
+        if (!joinedEventIds.includes(id)) {
+            setJoinedEventIds((prev) => [...prev, id]);
+        }
+    };
+    const handleLeaveUpdate = (id, updatedData) => {
+        setEvents((prev) =>
+            prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
+        );
+
+        // 👉 joined listesinden çıkar
+        setJoinedEventIds((prev) => prev.filter((eid) => eid !== id));
+    };
+
+
 
 
     const userId = parseInt(localStorage.getItem("userId"));
@@ -19,9 +39,25 @@ export default function EventsPage() {
 
     useEffect(() => {
         api.get('/events')
-            .then((res) => {
-                console.log('Event verisi:', res.data); // 👈 BAK BU
-                setEvents(res.data);
+            .then(async (res) => {
+                console.log('Event verisi:', res.data);
+
+                const events = res.data;
+
+                // 👇 Her event için participantCount çekiyoruz
+                const eventsWithCounts = await Promise.all(
+                    events.map(async (event) => {
+                        try {
+                            const countRes = await api.get(`/events/${event.eventId}/participantCount`);
+                            return { ...event, participantCount: countRes.data };
+                        } catch (err) {
+                            console.error(`Count alınamadı (eventId=${event.eventId}):`, err);
+                            return { ...event, participantCount: 0 };
+                        }
+                    })
+                );
+
+                setEvents(eventsWithCounts); // ✅ Artık sayı içeren hali setliyoruz
             })
             .catch((err) => console.error('Etkinlikler alınamadı:', err));
 
@@ -33,8 +69,8 @@ export default function EventsPage() {
                 })
                 .catch((err) => console.error('Katıldığın etkinlikler alınamadı:', err));
         }
-
     }, []);
+
 
 
     const handleChange = (e) => {
@@ -141,16 +177,25 @@ export default function EventsPage() {
                         eventId={event.eventId}
                         eventOwnerId={event.userId}
                         currentUserId={userId}
-                        isJoined={joinedEventIds.includes(event.eventId)} // <-- 🔥 Burası eklendi
-                        onEventUpdated={(id, updatedData) =>
-                            setEvents((prev) =>
-                                prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
-                            )
-                        }
+                        isJoined={joinedEventIds.includes(event.eventId)}
+                        onEventUpdated={(id, updatedData) => {
+                            // Join işlemi için ayrı güncelleme yap
+                            if (updatedData.action === 'join') {
+                                handleJoinUpdate(id, updatedData);
+                            } else if (updatedData.action === 'leave') {
+                                handleLeaveUpdate(id, updatedData);
+                            } else {
+                                // normal güncelleme
+                                setEvents((prev) =>
+                                    prev.map((ev) => (ev.eventId === id ? { ...ev, ...updatedData } : ev))
+                                );
+                            }
+                        }}
                         onEventDeleted={(id) =>
                             setEvents((prev) => prev.filter((ev) => ev.eventId !== id))
                         }
                     />
+
 
                 ))}
             </div>

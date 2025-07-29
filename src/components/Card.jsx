@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api/api';
 
 export default function Card({
@@ -14,11 +14,10 @@ export default function Card({
                                  onEventUpdated,
                                  onEventDeleted,
                                  isMyEvent,
-                                 isJoined // 🔥 bunu ekle
+                                 isJoined
                              }) {
     const [showDetails, setShowDetails] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [localParticipantCount, setLocalParticipantCount] = useState(participantCount ?? 0);
 
     const [editedEvent, setEditedEvent] = useState({
         title,
@@ -29,6 +28,7 @@ export default function Card({
 
     const isOwner = currentUserId === eventOwnerId;
 
+
     const handleJoin = async () => {
         if (!currentUserId) {
             window.location.href = "/signin";
@@ -38,32 +38,33 @@ export default function Card({
         try {
             await api.post(`/events/${eventId}/join?userId=${currentUserId}`);
             const countRes = await api.get(`/events/${eventId}/participantCount`);
-            setLocalParticipantCount(countRes.data); // 🎯 güncelle
-
-            onEventUpdated(eventId, { participantCount: countRes.data }); // varsa yukarıya gönder
 
 
+            onEventUpdated(eventId, {
+                participantCount: countRes.data,
+                action: 'join'
+            });
             alert('You joined the event! 🎉');
         } catch (err) {
             console.error('Katılım başarısız:', err);
         }
     };
 
-
-
     const handleLeave = async () => {
         try {
             await api.post(`/events/${eventId}/leave?userId=${currentUserId}`);
             const countRes = await api.get(`/events/${eventId}/participantCount`);
-            setLocalParticipantCount(countRes.data);
 
-            onEventUpdated(eventId, { participantCount: countRes.data });
+            onEventUpdated(eventId, {
+                participantCount: countRes.data,
+                action: 'leave'
+            });
+
             alert('You left the event.');
         } catch (err) {
             console.error('Etkinlikten çıkılamadı:', err);
         }
     };
-
 
     const handleImageError = (e) => {
         e.target.src = 'https://via.placeholder.com/300x200/000000/FFFFFF?text=Runexus';
@@ -96,15 +97,12 @@ export default function Card({
                 }
             });
 
-
-
             onEventDeleted(eventId);
             setShowDetails(false);
         } catch (err) {
             console.error('Etkinlik silinemedi:', err);
         }
     };
-
 
     const formattedDate = eventDate
         ? new Date(eventDate).toLocaleDateString('en-GB', {
@@ -141,8 +139,6 @@ export default function Card({
                         >
                             {isJoined ? 'Already Joined' : 'Join Event'}
                         </button>
-
-
                         <button
                             className="bg-orange-600 text-white text-sm px-4 py-2 rounded-full hover:bg-orange-700"
                             onClick={() => setShowDetails(true)}
@@ -157,7 +153,6 @@ export default function Card({
             {showDetails && (
                 <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center px-4">
                     <div className="bg-white max-w-xl w-full rounded-xl shadow-lg overflow-hidden relative">
-                        {/* Sağ üst Edit butonu */}
                         <button
                             onClick={() => setShowDetails(false)}
                             className="absolute top-2 right-2 bg-gray-300 text-gray-800 text-xs px-2 py-1 rounded hover:bg-gray-400"
@@ -222,8 +217,10 @@ export default function Card({
                                     <p className="text-gray-700 mb-4">{description}</p>
                                     <p className="text-sm text-gray-500 mb-1">🗓️ {formattedDate}</p>
                                     <p className="text-sm text-gray-600 mb-4">
-                                        👥 Participants: {localParticipantCount}/{participantLimit}
+                                        👥 Participants: {typeof participantCount === 'number' ? participantCount : 0}/{participantLimit}
                                     </p>
+
+
                                     <div className="flex justify-between mt-6">
                                         {isOwner && (
                                             <>
@@ -261,10 +258,6 @@ export default function Card({
                                             )}
                                         </div>
                                     )}
-
-
-
-
                                 </>
                             )}
                         </div>
