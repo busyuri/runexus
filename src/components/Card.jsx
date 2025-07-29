@@ -18,6 +18,8 @@ export default function Card({
                              }) {
     const [showDetails, setShowDetails] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [localParticipantCount, setLocalParticipantCount] = useState(participantCount ?? 0);
+
     const [editedEvent, setEditedEvent] = useState({
         title,
         description,
@@ -35,6 +37,12 @@ export default function Card({
 
         try {
             await api.post(`/events/${eventId}/join?userId=${currentUserId}`);
+            const countRes = await api.get(`/events/${eventId}/participantCount`);
+            setLocalParticipantCount(countRes.data); // 🎯 güncelle
+
+            onEventUpdated(eventId, { participantCount: countRes.data }); // varsa yukarıya gönder
+
+
             alert('You joined the event! 🎉');
         } catch (err) {
             console.error('Katılım başarısız:', err);
@@ -42,15 +50,20 @@ export default function Card({
     };
 
 
+
     const handleLeave = async () => {
         try {
             await api.post(`/events/${eventId}/leave?userId=${currentUserId}`);
+            const countRes = await api.get(`/events/${eventId}/participantCount`);
+            setLocalParticipantCount(countRes.data);
+
+            onEventUpdated(eventId, { participantCount: countRes.data });
             alert('You left the event.');
-            if (onEventDeleted) onEventDeleted(eventId);
         } catch (err) {
             console.error('Etkinlikten çıkılamadı:', err);
         }
     };
+
 
     const handleImageError = (e) => {
         e.target.src = 'https://via.placeholder.com/300x200/000000/FFFFFF?text=Runexus';
@@ -201,7 +214,7 @@ export default function Card({
                                     <p className="text-gray-700 mb-4">{description}</p>
                                     <p className="text-sm text-gray-500 mb-1">🗓️ {formattedDate}</p>
                                     <p className="text-sm text-gray-600 mb-4">
-                                        👥 Participants: {participantCount}/{participantLimit}
+                                        👥 Participants: {localParticipantCount}/{participantLimit}
                                     </p>
                                     <div className="flex justify-between mt-6">
                                         {isOwner && (
