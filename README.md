@@ -165,7 +165,7 @@ docker compose up --build
 The application will be accessible at:
 
 ```
-http://localhost:5173
+http://localhost:5175
 ```
 
 ### Stop and Remove Volumes
