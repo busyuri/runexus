@@ -36,10 +36,10 @@ public class MessageServiceImpl implements MessageService {
 
 
         UserEntity sender = userRepository.findById(input.getSenderId())
-                .orElseThrow(() -> new RuntimeException("Gönderen kullanıcı bulunamadı: " + input.getSenderId()));
+                .orElseThrow(() -> new RuntimeException("Sender not found: " + input.getSenderId()));
 
         UserEntity receiver = userRepository.findById(input.getReceiverId())
-                .orElseThrow(() -> new RuntimeException("Alıcı kullanıcı bulunamadı: " + input.getReceiverId()));
+                .orElseThrow(() -> new RuntimeException("Receiver not found: " + input.getReceiverId()));
 
 
         entity.setSender(sender);
@@ -86,7 +86,7 @@ public class MessageServiceImpl implements MessageService {
             return createMessage(message);
 
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Geçersiz kullanıcı ID formatı (Long değil): " + e.getMessage());
+            throw new RuntimeException("no available id " + e.getMessage());
         }
     }
 
@@ -105,7 +105,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void markMessageAsRead(Long messageId) {
         MessageEntity message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Mesaj bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("Message is not found"));
 
         message.setRead(true);
         messageRepository.save(message);
