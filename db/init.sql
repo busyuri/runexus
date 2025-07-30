@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS events (
 
 INSERT INTO events (user_id, title, description, participant_limit, participant_count, is_full, event_date, image_url)
 VALUES 
-(1, 'Berlin Run 5K', 'Join us for a fun 5K run in Berlin at 5 pm. Great for watching sunset ', 100, 23, false, '2025-08-15', 'https://unsplash.com/photos/a-woman-running-on-a-road-with-a-sky-background-RnWnBVWL5SM'),
-(2, 'City Sunset Run', 'Evening city run at golden hour.', 75, 42, false, '2025-08-20', 'https://images.unsplash.com/photo-1571008887538-3e7e63f2105d'),
-(3, 'Würzburg Vineyard Run Challenge', 'Conquer the trails with fellow runners. Meeting at 10 am in PSW.', 60, 19, false, '2025-08-25', 'https://images.unsplash.com/photo-1562072541-39f60b7b57b4'),
-(4, 'Early Bird Sprint: Randersacker', 'Morning sprint event to kickstart your day. Meeting at 8 am in Maingasse', 50, 34, false, '2025-08-18', 'https://images.unsplash.com/photo-1546483875-ad9014c88eba');
+(10, 'Berlin Run 5K', 'Join us for a fun 5K run in Berlin at 5 pm. Great for watching sunset ', 100, 23, false, '2025-08-15', 'https://unsplash.com/photos/a-woman-running-on-a-road-with-a-sky-background-RnWnBVWL5SM'),
+(10, 'City Sunset Run', 'Evening city run at golden hour.', 75, 42, false, '2025-08-20', 'https://images.unsplash.com/photo-1571008887538-3e7e63f2105d'),
+(10, 'Würzburg Vineyard Run Challenge', 'Conquer the trails with fellow runners. Meeting at 10 am in PSW.', 60, 19, false, '2025-08-25', 'https://images.unsplash.com/photo-1562072541-39f60b7b57b4'),
+(10, 'Early Bird Sprint: Randersacker', 'Morning sprint event to kickstart your day. Meeting at 8 am in Maingasse', 50, 34, false, '2025-08-18', 'https://images.unsplash.com/photo-1546483875-ad9014c88eba');
 
 CREATE TABLE IF NOT EXISTS entries (
     id SERIAL PRIMARY KEY,
