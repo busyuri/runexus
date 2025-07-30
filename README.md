@@ -157,6 +157,11 @@ src/main/java/com/example/runexus/
 ## How to Run
 
 ### Build and Start the Application
+```bash
+cd backend
+mvn clean package
+cd ..
+```
 
 ```bash
 docker compose up --build
